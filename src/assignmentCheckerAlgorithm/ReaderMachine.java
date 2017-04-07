@@ -69,8 +69,8 @@ public class ReaderMachine {
 			if (line.contains("/*") && line.contains("*/") && Continue) {
 				line = ignorMaster.ignorStarComment(line);
 				if (!line.equals("")) {
-					//StringToWord(line, codeList);
-					 codeList.add(line);
+					StringToWord(line, codeList);
+					 //codeList.add(line);
 				}
 				continue;
 			}
@@ -83,10 +83,10 @@ public class ReaderMachine {
 				if (line.equals("")) {
 					continue;
 				} else {
-					//StringToWord(line, codeList);
-					//StringToWord(line, backUpList);
-					 backUpList.add(line);
-					 codeList.add(line);
+					StringToWord(line, codeList);
+					StringToWord(line, backUpList);
+					// backUpList.add(line);
+					 //codeList.add(line);
 					continue;
 				}
 
@@ -104,8 +104,8 @@ public class ReaderMachine {
 				backUp = ignorMaster.ignorSlashComment(backUp);
 				backUp = ignorMaster.ignorStarComment(backUp);
 				if (!backUp.equals("")) {
-					//StringToWord(line, backUpList);
-					 backUpList.add(backUp);
+					StringToWord(line, backUpList);
+					// backUpList.add(backUp);
 				}
 
 				continue;
@@ -121,8 +121,8 @@ public class ReaderMachine {
 				if (line.equals("")) {
 					continue;
 				}
-				//StringToWord(line, codeList);
-				 codeList.add(line);
+				StringToWord(line, codeList);
+				 //codeList.add(line);
 			}
 
 		}

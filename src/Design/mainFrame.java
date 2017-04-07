@@ -27,8 +27,8 @@ import javafx.stage.Stage;
 public class mainFrame implements constant {
 
 	private String path = "dataStore";
-	 private double min_copy = 50.0;
-	 private int totalProblems = 5;
+	 private double min_copy = 0.0;
+	 private int totalProblems= 11;
 	 private int marks = 20;
 
 	public void init(Stage primaryStage) {
@@ -98,9 +98,9 @@ public class mainFrame implements constant {
 				String min = min_copy_Text.getText();
 				if (!Problems.trim().isEmpty() && !mark.trim().isEmpty() && !min.trim().isEmpty()) {
 					System.out.println("ok Done");
-					int totalProblems = Integer.parseInt(Problems);
-					int marks = Integer.parseInt(mark);
-					double min_copy = Double.parseDouble(min);
+					 totalProblems = Integer.parseInt(Problems);
+					 marks = Integer.parseInt(mark);
+					 min_copy = Double.parseDouble(min);
 
 				}
 
@@ -158,7 +158,7 @@ public class mainFrame implements constant {
 	private static Scene scene = new Scene(root, width, height);
 	private static TableView<studentData> informations;
 	private static Label label;
-	private ObservableList<studentData> list;
+	private ObservableList<studentData> list= FXCollections.observableArrayList();
 	private static Button insertData, pdf, word, Marks, copyList;
 	private TextField min_copy_Text, totalproblems_Text, marks_Text;
 
