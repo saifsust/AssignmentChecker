@@ -57,7 +57,7 @@ public class mapMaster {
 				ReaderMachine.clear();
 				codeList = ReaderMachine.getCode(Path.getPath(solution));
 				if (codeList.isEmpty()) {
-					codeSolutionMap.put(solution.getName(), new ArrayList<String>());
+					codeSolutionMap.put(solution.getName(),null);
 				} else {
 					codeSolutionMap.put(solution.getName(), new ArrayList<String>(codeList));
 					ReaderMachine.clear();

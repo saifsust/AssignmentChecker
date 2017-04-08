@@ -2,7 +2,7 @@ package assignmentCheckerAlgorithm;
 
 public class marksCalculationMaster {
 
-	protected static double calculation(double copy, double min_copy, int solved, int totalProblems, double marks) {
+	public static double calculation(double copy, double min_copy, int solved, int totalProblems, double marks) {
 		double deserved_marks = (double) (marks / (totalProblems * 1.0)) * (solved * 1.0);
 		double cut_marks = (double) (deserved_marks / 100.0) * (copy - min_copy);
 		//System.out.println(cut_marks);

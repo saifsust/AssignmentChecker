@@ -126,8 +126,8 @@ public class ReaderMachine {
 			}
 
 		}
-		scanner.close();
-		scannerMaster.close();
+		//scanner.close();
+		//scannerMaster.close();
 	}
 
 	public static List<String> getCode(String path) {

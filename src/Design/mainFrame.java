@@ -2,8 +2,14 @@ package Design;
 
 import java.io.File;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import assignmentCheckerAlgorithm.CalculationMaster;
+import assignmentCheckerAlgorithm.marksCalculationMaster;
 import assignmentCheckerAlgorithm.studentData;
+import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -22,14 +28,17 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Font;
+import javafx.stage.DirectoryChooser;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
-public class mainFrame implements constant {
+public class mainFrame extends Application implements constant {
 
-	private String path = "dataStore";
-	 private double min_copy = 0.0;
-	 private int totalProblems= 11;
-	 private int marks = 20;
+	private String path;/// = "dataStore";
+	private double min_copy = 0.0;
+	private int totalProblems = 0;
+	private int mar = 0;
+	boolean test = true;
 
 	public void init(Stage primaryStage) {
 
@@ -38,15 +47,14 @@ public class mainFrame implements constant {
 
 		ImageView imgView = new ImageView(img);
 		root.getChildren().add(imgView);
-
-		ButtonView();
-	    TableView();
+		TableView();
+		ButtonView(primaryStage);
 
 		primaryStage.show();
 
 	}
 
-	private void ButtonView() {
+	private void ButtonView(final Stage PrimaryStage) {
 		buttonGallery = new Pane();
 		buttonGallery.setStyle("-fx-background-color: GREEN;" + "-fx-background-insets: 10; "
 				+ "-fx-background-radius: 10;" + "-fx-effect: dropshadow(three-pass-box, purple, 10, 0, 0, 0);");
@@ -56,10 +64,33 @@ public class mainFrame implements constant {
 		insertData.setLayoutX(layoutX);
 		insertData.setLayoutY(layoutY);
 		insertData.setPrefSize(prefWidth, prefHeight);
+
+		chooser.setTitle("Select A Folder");
 		insertData.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent arg0) {
-				System.out.println("Insert");
+				/// System.out.println("Insert");
+				File file = chooser.showDialog(PrimaryStage);
+				// System.out.println(file.getAbsolutePath());
+				if (file != null) {
+					totalproblems_Text.clear();
+					min_copy_Text.clear();
+					marks_Text.clear();
+					test = false;
+					path = "";
+					path = file.getAbsolutePath();
+					if (!list.isEmpty())
+						list.clear();
+					min_copy = 0;
+					totalProblems = 0;
+					mar = 0;
+					list = CalculationMaster.getObservableList(path, min_copy, totalProblems, mar);
+					CalculationMaster.clear();
+					for (int i = 0; i < list.size(); i++) {
+						storeList.add(list.get(i));
+					}
+					mainTable.setItems(list);
+				}
 			}
 
 		});
@@ -97,11 +128,24 @@ public class mainFrame implements constant {
 				String mark = marks_Text.getText();
 				String min = min_copy_Text.getText();
 				if (!Problems.trim().isEmpty() && !mark.trim().isEmpty() && !min.trim().isEmpty()) {
-					System.out.println("ok Done");
-					 totalProblems = Integer.parseInt(Problems);
-					 marks = Integer.parseInt(mark);
-					 min_copy = Double.parseDouble(min);
+					// System.out.println("ok Done");
+					totalProblems = Integer.parseInt(Problems);
+					mar = Integer.parseInt(mark);
+					min_copy = Double.parseDouble(min);
+					ObservableList<studentData> mylist = FXCollections.observableArrayList();
+					mylist.clear();
+					for (int i = 0; i < storeList.size(); i++) {
+						double m = marksCalculationMaster.calculation(storeList.get(i).getCopy(), min_copy,
+								storeList.get(i).getSolved(), totalProblems, mar);
+						storeList.get(i).setMarks(m);
+						mylist.add(storeList.get(i));
+						// System.out.println(list.get(i).getMarks());
 
+					}
+					
+					for (int i = 0; i < list.size(); i++) {
+						mainTable.getItems().set(i, mylist.get(i));
+					}
 				}
 
 			}
@@ -133,10 +177,13 @@ public class mainFrame implements constant {
 		scrollpane = new ScrollPane();
 		scrollpane.setFitToHeight(true);
 		scrollpane.setFitToWidth(true);
-		list = CalculationMaster.getObservableList(path, min_copy, totalProblems, marks);
-		 CalculationMaster.clear();
-		 scrollpane.setContent(tableFactory.getMainTable(list));
-		// scrollpane.setContent(tableFactory.getCopyTable(getFactory.getObservableListOfInformations("dataStore")));
+		setReg_numberColumn();
+		setCopyColumn();
+		setSolvesColumn();
+		setMarksColumn();
+		mainTable.getColumns().addAll(Reg_number, marks, copy, solves);
+		/// mainTable.setItems(list);
+		scrollpane.setContent(mainTable);
 		scrollpane.setLayoutX(10.0);
 		scrollpane.setLayoutY(120.0);
 		scrollpane.setPrefSize(460, 370);
@@ -146,6 +193,40 @@ public class mainFrame implements constant {
 
 	}
 
+	private static void setReg_numberColumn() {
+		Reg_number.setCellValueFactory(new PropertyValueFactory<studentData, String>("regNum"));
+		Reg_number.setPrefWidth(tableRegPrefWidth);
+		Reg_number.setResizable(false);
+		// Reg_number.setStyle("-fx-background-color: GREEN;");
+
+	}
+
+	private static void setMarksColumn() {
+		marks.setCellValueFactory(new PropertyValueFactory<studentData, Double>("marks"));
+		marks.setPrefWidth(tableColumnPrefWidth);
+		marks.setResizable(false);
+		// marks.setStyle("-fx-background-color: YELLOW;");
+
+	}
+
+	private static void setSolvesColumn() {
+		solves.setCellValueFactory(new PropertyValueFactory<studentData, Integer>("solved"));
+		solves.setPrefWidth(tableColumnPrefWidth);
+		solves.setResizable(false);
+		// solves.setStyle("-fx-background-color: YELLOW;");
+
+	}
+
+	private static void setCopyColumn() {
+		copy.setCellValueFactory(new PropertyValueFactory<studentData, Double>("copy"));
+		copy.setPrefWidth(tableColumnPrefWidth);
+		copy.setResizable(false);
+		// copy.setStyle("-fx-background-color: RED;");
+
+	}
+
+	private List<studentData> storeList = new ArrayList<studentData>();
+	private DirectoryChooser chooser = new DirectoryChooser();
 	private Image img = new Image(new File(imagePath + "background.jpg").toURI().toString());
 	private static final double layoutX = 65.0;
 	private static final double layoutY = 100.0;
@@ -158,8 +239,22 @@ public class mainFrame implements constant {
 	private static Scene scene = new Scene(root, width, height);
 	private static TableView<studentData> informations;
 	private static Label label;
-	private ObservableList<studentData> list= FXCollections.observableArrayList();
+	private ObservableList<studentData> list = FXCollections.observableArrayList();;
 	private static Button insertData, pdf, word, Marks, copyList;
 	private TextField min_copy_Text, totalproblems_Text, marks_Text;
+	private static TableColumn<studentData, Double> copy = new TableColumn<studentData, Double>("Copy");
+	private static TableColumn<studentData, Integer> solves = new TableColumn<studentData, Integer>("Solves");
+	private static TableColumn<studentData, String> Reg_number = new TableColumn<studentData, String>("Reg_number");
+	private static TableColumn<studentData, Double> marks = new TableColumn<studentData, Double>("Marks");
+	private static TableView<studentData> mainTable = new TableView<studentData>();
+	private static TableView<studentData> copyTable = new TableView<studentData>();
 
+	@Override
+	public void start(Stage primaryStage) throws Exception {
+		new mainFrame().init(primaryStage);
+	}
+
+	public static void main(String[] args) {
+		launch(args);
+	}
 }
